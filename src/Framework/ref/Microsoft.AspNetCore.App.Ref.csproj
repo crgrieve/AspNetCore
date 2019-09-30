@@ -171,17 +171,18 @@ This package is an internal implementation of the .NET Core SDK and is not meant
           Condition="'$(IsPackable)' == 'true'">
     <PropertyGroup>
       <TarCommand Condition="'$(TarCommand)' == ''">tar</TarCommand>
-      <_RetryCommand>PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass -Command</_RetryCommand>
-      <_RetryCommand>$(_RetryCommand) &quot;[System.Threading.Thread]::CurrentThread.CurrentCulture = '';</_RetryCommand>
-      <_RetryCommand>$(_RetryCommand) [System.Threading.Thread]::CurrentThread.CurrentUICulture = '';</_RetryCommand>
-      <_RetryCommand>$(_RetryCommand) try { &amp; '$(RepoRoot)\eng\scripts\InstallTar.ps1' -Verbose;</_RetryCommand>
-      <_RetryCommand>$(_RetryCommand) &amp; $env:TarCommand -czf $(_TarArchiveOutputPath) .;</_RetryCommand>
-      <_RetryCommand>$(_RetryCommand) exit $LASTEXITCODE } catch { write-host $_; exit 1 }&quot;<_RetryCommand>
 
       <!-- For the tar packed with git, transform e.g. "C:\root\AspNetCore\File.tar.gz" to "/C/root/AspNetCore/File.tar.gz". -->
       <_TarArchiveOutputPath>$(TarArchiveOutputPath)</_TarArchiveOutputPath>
       <_TarArchiveOutputPath
           Condition="$(TarCommand.Contains('\Git\'))">/$(TarArchiveOutputPath.Replace('\','/').Replace(':',''))</_TarArchiveOutputPath>
+
+      <_RetryCommand>PowerShell -NoProfile -NoLogo -ExecutionPolicy Bypass -Command</_RetryCommand>
+      <_RetryCommand>$(_RetryCommand) &quot;[System.Threading.Thread]::CurrentThread.CurrentCulture = '';</_RetryCommand>
+      <_RetryCommand>$(_RetryCommand) [System.Threading.Thread]::CurrentThread.CurrentUICulture = '';</_RetryCommand>
+      <_RetryCommand>$(_RetryCommand) try { &amp; '$(RepoRoot)\eng\scripts\InstallTar.ps1' -Verbose;</_RetryCommand>
+      <_RetryCommand>$(_RetryCommand) &amp; $env:TarCommand -czf $(_TarArchiveOutputPath) .;</_RetryCommand>
+      <_RetryCommand>$(_RetryCommand) exit $LASTEXITCODE } catch { write-host $_; exit 1 }&quot;</_RetryCommand>
     </PropertyGroup>
 
     <ZipDirectory
