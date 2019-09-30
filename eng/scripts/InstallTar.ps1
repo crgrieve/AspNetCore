@@ -21,7 +21,7 @@ Set-StrictMode -Version 1
 
 # Find tar. If not found, install Git to get it.
 $repoRoot = (Join-Path $PSScriptRoot "..\.." -Resolve)
-$installDir = "$repoRoot\.tools\Git\win-x64\"
+$installDir = "$repoRoot\.tools\Git\win-x64"
 $tarCommand = "$installDir\usr\bin\tar.exe"
 
 if (Test-Path "$env:SystemRoot\System32\tar.exe") {
@@ -48,7 +48,7 @@ else {
     $Uri = "https://netcorenativeassets.blob.core.windows.net/resource-packages/external/windows/git/Git-${GitVersion}-64-bit.zip"
 
     Import-Module -Name (Join-Path $PSScriptRoot "..\common\native\CommonLibrary.psm1" -Resolve)
-    $InstallStatus = CommonLibrary\DownloadAndExtract -Uri $Uri -InstallDirectory "$installDir" -Force:$Force -Verbose
+    $InstallStatus = CommonLibrary\DownloadAndExtract -Uri $Uri -InstallDirectory "$installDir\" -Force:$Force -Verbose
 
     if ($InstallStatus -Eq $False) {
         Write-Error "Installation failed"
@@ -56,9 +56,8 @@ else {
     }
 }
 
+Write-Host "Tar now available at `"$tarCommand`""
+$env:TarCommand = "`"$tarCommand`""
 if ($env:TF_BUILD) {
-    Write-Host "##vso[task.setvariable variable=TarCommand;]$tarCommand"
-}
-else {
-    Write-Host "Tar now available at '$tarCommand'"
+    Write-Host "##vso[task.setvariable variable=TarCommand]`"$tarCommand`""
 }
